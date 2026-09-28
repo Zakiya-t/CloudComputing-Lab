@@ -751,12 +751,12 @@ These are the measurements required by the Type-2 benchmark section of the manua
 | Memory               | 2 GB                    |
 | Disk                 | 20 GB                   |
 | Network              | NAT                     |
-| Total Execution Time | **[ADD ACTUAL RESULT]** |
-| Total Events         | **[ADD ACTUAL RESULT]** |
-| Events/sec           | **[ADD ACTUAL RESULT]** |
-| Minimum Latency      | **[ADD ACTUAL RESULT]** |
-| Average Latency      | **[ADD ACTUAL RESULT]** |
-| Maximum Latency      | **[ADD ACTUAL RESULT]** |
+| Total Execution Time | 10.0004 s |
+| Total Events         | 333929 |
+| Events/sec           | 33381.54 |
+| Minimum Latency      | 0.01 ms |
+| Average Latency      | 0.03 ms |
+| Maximum Latency      | 5.54 ms |
 
 ---
 
