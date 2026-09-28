@@ -1,51 +1,94 @@
-# ⚡ Performance Analysis of Type-2 Hypervisor
+# ⚡ Performance Analysis of Type-1 and Type-2 Hypervisors
 
-## VMware Workstation Virtual Machine Performance Analysis
+### Proxmox VE 🖥️ vs VMware Workstation 💻
 
-![Type-2 Hypervisor](https://img.shields.io/badge/Hypervisor-Type--2-blue)
-![VMware Workstation](https://img.shields.io/badge/VMware-Workstation-blue)
-![Ubuntu](https://img.shields.io/badge/Guest%20OS-Ubuntu-orange)
-![Sysbench](https://img.shields.io/badge/Benchmark-Sysbench-green)
-![Status](https://img.shields.io/badge/Status-Experimental-success)
+![Type-1](https://img.shields.io/badge/Type--1-Proxmox%20VE-E57000?style=for-the-badge)
+![Type-2](https://img.shields.io/badge/Type--2-VMware%20Workstation-607078?style=for-the-badge)
+![Guest OS](https://img.shields.io/badge/Guest%20OS-Ubuntu-E95420?style=for-the-badge)
+![Benchmark](https://img.shields.io/badge/Benchmark-Sysbench-2ea44f?style=for-the-badge)
+![Platform](https://img.shields.io/badge/Platform-Virtualization-blue?style=for-the-badge)
+![Status](https://img.shields.io/badge/Status-Experimental-success?style=for-the-badge)
 
-> **A practical performance-analysis experiment using VMware Workstation to study the behavior of an Ubuntu virtual machine running on a Type-2 hypervisor.**
+> A practical experimental study of **Type-1 and Type-2 hypervisors** using identically configured Ubuntu virtual machines and a common CPU benchmark workload.
 
 ---
 
-# 📌 Overview
+## 📌 Project Overview
 
-This project implements the **Type-2 Hypervisor performance-analysis experiment** using **VMware Workstation**.
+This project studies the performance of two different hypervisor architectures:
 
-The experiment creates an Ubuntu virtual machine using VMware Workstation, configures fixed virtual hardware resources, verifies the guest configuration, monitors resource utilization, and evaluates CPU performance using **Sysbench**.
+| Hypervisor             | Type       | Platform              |
+| ---------------------- | ---------- | --------------------- |
+| **Proxmox VE**         | **Type-1** | Bare-metal hypervisor |
+| **VMware Workstation** | **Type-2** | Hosted hypervisor     |
 
-The resulting measurements form the **Type-2 hypervisor dataset** used for observation and later comparison with the Type-1 hypervisor environment.
+The experiment creates an Ubuntu virtual machine on each platform using a controlled virtual hardware configuration and evaluates the VM using **Sysbench CPU benchmarking**.
 
-According to the supplied laboratory manual, VMware Workstation is a **Type-2 hypervisor**, meaning it operates on top of a host operating system. The experiment uses the same basic guest resource configuration as the Type-1 part so that the two hypervisor environments can later be compared.
+The primary goal is to observe how the two virtualization approaches behave when the guest virtual machine is configured with comparable CPU, memory, and storage resources.
+
+The supplied laboratory manual organizes the experiment into:
+
+```text
+PART A → Type-1 Hypervisor → Proxmox VE
+PART B → Type-2 Hypervisor → VMware Workstation
+```
+
+The manual specifically states that the virtual machines should use the same basic configuration so that their performance can be studied comparatively.
 
 ---
 
 # 🎯 Objectives
 
-The main objectives of this experiment are to:
+The objectives of this experiment are to:
 
-* Understand the working environment of a **Type-2 hypervisor**.
-* Create a virtual machine using VMware Workstation.
-* Install Ubuntu as the guest operating system.
-* Configure fixed CPU, memory, storage, and network resources.
-* Verify the VM's hardware and operating-system configuration.
-* Monitor CPU and memory utilization.
-* Install and execute Sysbench.
-* Measure CPU performance and latency.
-* Record the benchmark observations.
-* Preserve the resulting data for analysis and comparison with the Type-1 hypervisor.
+* Understand the concepts of **Type-1 and Type-2 hypervisors**.
+* Create an Ubuntu VM using **Proxmox VE**.
+* Create an Ubuntu VM using **VMware Workstation**.
+* Use controlled virtual hardware configurations.
+* Verify CPU, memory, disk, network, and operating-system settings.
+* Monitor VM resource utilization.
+* Measure CPU performance using **Sysbench**.
+* Record execution time, total events, throughput, and latency statistics.
+* Preserve benchmark outputs and observations.
+* Compare the measured behavior of the Type-1 and Type-2 environments.
 
 ---
 
-# 🧠 What is a Type-2 Hypervisor?
+# 🧠 Hypervisor Architecture
 
-A **Type-2 hypervisor** runs on top of a host operating system.
+## Type-1 Hypervisor
 
-The basic architecture used in this experiment is:
+A Type-1 hypervisor runs directly on the physical server hardware.
+
+```text
+┌───────────────────────────────┐
+│       Physical Hardware       │
+└───────────────┬───────────────┘
+                │
+                ▼
+┌───────────────────────────────┐
+│         Proxmox VE            │
+│       Type-1 Hypervisor       │
+└───────────────┬───────────────┘
+                │
+                ▼
+┌───────────────────────────────┐
+│          Ubuntu VM            │
+│                               │
+│  2 vCPU                       │
+│  2 GB RAM                     │
+│  20 GB Virtual Disk           │
+│  vmbr0 Network                │
+└───────────────────────────────┘
+```
+
+In this experiment, **Proxmox VE** represents the Type-1 environment. The manual describes Proxmox VE as being deployed on a centralized physical server and accessed through its web interface.
+
+---
+
+## Type-2 Hypervisor
+
+A Type-2 hypervisor runs on top of a host operating system.
 
 ```text
 ┌───────────────────────────────┐
@@ -66,170 +109,252 @@ The basic architecture used in this experiment is:
                 │
                 ▼
 ┌───────────────────────────────┐
-│           Ubuntu VM           │
+│          Ubuntu VM            │
 │                               │
-│  CPU     → 2 vCPU             │
-│  Memory  → 2 GB               │
-│  Disk    → 20 GB              │
-│  Network → NAT                │
+│  2 vCPU                       │
+│  2 GB RAM                     │
+│  20 GB Virtual Disk           │
+│  NAT Network                  │
 └───────────────────────────────┘
 ```
 
-The laboratory manual explicitly defines VMware Workstation as the Type-2 environment for **Part B** of the experiment.
+The manual identifies **VMware Workstation as the Type-2 hypervisor** and places it in Part B of the experiment.
 
 ---
 
-# 🏗️ Experimental Architecture
+# 🔍 Type-1 vs Type-2 at a Glance
 
-```mermaid
-flowchart TD
-    A["Physical Hardware"] --> B["Host Operating System"]
-    B --> C["VMware Workstation<br/>Type-2 Hypervisor"]
-    C --> D["Ubuntu Virtual Machine"]
+| Feature                    | Type-1                        | Type-2                 |
+| -------------------------- | ----------------------------- | ---------------------- |
+| Hypervisor                 | **Proxmox VE**                | **VMware Workstation** |
+| Architecture               | Bare-metal                    | Hosted                 |
+| Host OS beneath hypervisor | No conventional host OS layer | Yes                    |
+| Guest OS                   | Ubuntu                        | Ubuntu                 |
+| CPU                        | 2 vCPU                        | 2 vCPU                 |
+| Memory                     | 2 GB                          | 2 GB                   |
+| Disk                       | 20 GB                         | 20 GB                  |
+| Network                    | `vmbr0` bridge                | NAT                    |
+| CPU Benchmark              | Sysbench                      | Sysbench               |
+| Resource Monitoring        | Proxmox + Ubuntu tools        | VMware + Ubuntu tools  |
 
-    D --> E["2 vCPU"]
-    D --> F["2 GB RAM"]
-    D --> G["20 GB Virtual Disk"]
-    D --> H["NAT Network"]
+## The VM configurations above follow the configurations specified in the supplied manual.
 
-    D --> I["System Verification"]
-    D --> J["Resource Monitoring"]
-    D --> K["Sysbench CPU Benchmark"]
+# 🏗️ Experimental Design
 
-    I --> L["Observation Data"]
-    J --> L
-    K --> L
+The comparison follows this basic structure:
 
-    L --> M["Type-2 Results"]
-    M --> N["Performance Analysis"]
-    N --> O["Type-1 / Type-2 Comparison"]
+```text
+                    PERFORMANCE ANALYSIS
+                            │
+               ┌────────────┴────────────┐
+               │                         │
+               ▼                         ▼
+       TYPE-1 HYPERVISOR         TYPE-2 HYPERVISOR
+          Proxmox VE             VMware Workstation
+               │                         │
+               ▼                         ▼
+          Ubuntu VM                 Ubuntu VM
+               │                         │
+               └────────────┬────────────┘
+                            │
+                     SAME CORE WORKLOAD
+                            │
+                            ▼
+                    Sysbench CPU Test
+                            │
+                            ▼
+                  Performance Measurements
+                            │
+                            ▼
+                 Type-1 / Type-2 Comparison
 ```
 
 ---
 
-# 🖥️ Experimental Environment
+# 🖥️ Experimental Configuration
 
-| Component               | Configuration                |
-| ----------------------- | ---------------------------- |
-| Hypervisor              | **VMware Workstation**       |
-| Hypervisor Type         | **Type-2**                   |
-| Host Operating System   | Windows                      |
-| Guest Operating System  | Ubuntu                       |
-| CPU Allocation          | 2 vCPU                       |
-| Memory Allocation       | 2048 MB / 2 GB               |
-| Virtual Disk            | 20 GB                        |
-| Network Mode            | NAT                          |
-| Processor Configuration | 1 processor × 2 cores        |
-| VM Configuration        | Typical                      |
-| Virtual Disk Storage    | Single file / default option |
+## Common VM Configuration
 
-## These values follow the VMware Workstation configuration specified in the supplied manual.
-
-# 🧰 VMware Workstation Setup
-
-The Type-2 VM creation workflow is:
+The manual specifies a common guest configuration for both environments:
 
 ```text
-Launch VMware Workstation
+Operating System → Ubuntu
+CPU              → 2 vCPU
+Memory           → 2 GB
+Disk             → 20 GB
+```
+
+## This allows the hypervisor environments to be studied using comparable guest resources.
+
+## Type-1 Configuration — Proxmox VE
+
+| Parameter       | Configuration                |
+| --------------- | ---------------------------- |
+| Hypervisor      | Proxmox VE                   |
+| Hypervisor Type | Type-1                       |
+| Guest OS        | Ubuntu                       |
+| CPU             | 1 socket × 2 cores           |
+| Total vCPU      | 2                            |
+| Memory          | 2048 MiB / 2 GB              |
+| Disk            | 20 GB                        |
+| Storage         | local-lvm / assigned storage |
+| Network Bridge  | `vmbr0`                      |
+| Network Model   | Default / VirtIO             |
+| Graphics        | Default                      |
+| Machine         | Default                      |
+| BIOS            | Default                      |
+| SCSI Controller | Default                      |
+
+The manual specifies the Proxmox VM workflow as:
+
+```text
+General
+   ↓
+OS
+   ↓
+System
+   ↓
+Disks
+   ↓
+CPU
+   ↓
+Memory
+   ↓
+Network
+   ↓
+Confirm
+```
+
+---
+
+## Type-2 Configuration — VMware Workstation
+
+| Parameter        | Configuration                |
+| ---------------- | ---------------------------- |
+| Hypervisor       | VMware Workstation           |
+| Hypervisor Type  | Type-2                       |
+| Host OS          | Windows                      |
+| Guest OS         | Ubuntu                       |
+| CPU              | 1 processor × 2 cores        |
+| Total vCPU       | 2                            |
+| Memory           | 2048 MB / 2 GB               |
+| Disk             | 20 GB                        |
+| Network          | NAT                          |
+| VM Configuration | Typical                      |
+| Disk Storage     | Single file / default option |
+
+The VMware Workstation configuration is specified in the manual's Type-2 section.
+
+---
+
+# 🌐 Type-1 — Proxmox VE Setup
+
+## 1. Access Proxmox VE
+
+Open a web browser and navigate to:
+
+```text
+https://<PROXMOX_SERVER_IP>:8006
+```
+
+Example:
+
+```text
+https://192.168.X.X:8006
+```
+
+The Proxmox server IP address and login credentials must be available before starting the experiment.
+
+---
+
+## 2. Log In
+
+If the browser shows a certificate warning:
+
+```text
+Advanced
+   ↓
+Proceed to <Server IP>
+   ↓
+Proxmox Login
+```
+
+Enter the assigned credentials and access the Proxmox management dashboard.
+
+---
+
+## 3. Understand the Proxmox Interface
+
+The manual describes the hierarchy as:
+
+```text
+Datacenter
+    │
+    └── Proxmox Node
+          ├── Virtual Machines
+          ├── Storage
+          └── Network
+```
+
+The interface also provides access to CPU and memory utilization information.
+
+---
+
+# 🛠️ Creating the Type-1 Virtual Machine
+
+## VM Creation Workflow
+
+```text
+Select Proxmox Node
         ↓
-Create a New Virtual Machine
+Create VM
         ↓
-Select Typical Configuration
+Configure General Settings
         ↓
 Select Ubuntu ISO
         ↓
-Configure VM Name and Location
+Configure System
         ↓
-Configure 20 GB Virtual Disk
-        ↓
-Customize Hardware
+Configure 20 GB Disk
         ↓
 Configure 2 vCPU
         ↓
 Configure 2 GB RAM
         ↓
-Configure Network
+Configure vmbr0
         ↓
-Finish VM Creation
+Confirm
         ↓
-Power On VM
-        ↓
-Install Ubuntu
+Finish
 ```
 
-The manual specifies **Typical (recommended)** VM configuration and Ubuntu installation media for the VMware workflow.
+### Recommended naming convention
+
+```text
+<Name>-Type1
+```
+
+Example from the manual:
+
+```text
+CC-Experiment1-Type1
+```
+
+The manual specifies the naming convention and VM creation stages in the Proxmox section.
 
 ---
 
-# ⚙️ Virtual Machine Configuration
+# ✅ Type-1 VM Verification
+
+After the Ubuntu VM is created and started, verify the guest configuration.
 
 ## Operating System
-
-The guest operating system is:
-
-```text
-Ubuntu
-```
-
-The VM is created using an Ubuntu ISO image.
-
----
-
-## Processor Configuration
-
-The manual specifies:
-
-```text
-Number of Processors      = 1
-Number of Cores/Processor = 2
---------------------------------
-Total Virtual CPUs        = 2
-```
-
----
-
-## Memory Configuration
-
-```text
-Memory = 2048 MB
-       = 2 GB RAM
-```
-
----
-
-## Virtual Disk
-
-```text
-Maximum Disk Size = 20 GB
-```
-
-The manual specifies storing the virtual disk as a single file/default option.
-
----
-
-## Network Configuration
-
-The recommended network configuration in the VMware section is:
-
-```text
-Network Adapter = NAT
-```
-
-The manual describes NAT as allowing the virtual machine to access the network through the host system.
-
----
-
-# ✅ VM Verification
-
-After Ubuntu installation, the virtual machine is verified from inside the guest operating system.
-
-## Operating System and Kernel
 
 ```bash
 hostnamectl
 ```
 
-Verify:
+Check:
 
 ```text
 Hostname
@@ -238,39 +363,34 @@ Kernel Version
 Architecture
 ```
 
----
-
-## CPU Configuration
+## CPU
 
 ```bash
 lscpu
 ```
 
-Observe:
+Check:
 
 ```text
 Architecture
 CPU(s)
 CPU Model
-Number of Cores
-Virtualization Type
+Virtualization Information
 ```
 
-The expected allocation is approximately:
+Expected allocation:
 
 ```text
-2 Virtual CPUs
+2 vCPU
 ```
 
----
-
-## Memory Configuration
+## Memory
 
 ```bash
 free -h
 ```
 
-Observe:
+Check:
 
 ```text
 Total Memory
@@ -282,18 +402,16 @@ Available Memory
 Expected allocation:
 
 ```text
-Approximately 2 GB
+2 GB
 ```
 
----
-
-## Disk Configuration
+## Disk
 
 ```bash
 df -h
 ```
 
-Observe:
+Check:
 
 ```text
 Filesystem
@@ -302,15 +420,13 @@ Used Space
 Available Space
 ```
 
-These verification steps are explicitly described in the Type-2 portion of the supplied manual.
+These checks are directly specified in the Type-1 workflow.
 
 ---
 
-# 📊 Resource Monitoring
+# 📊 Type-1 Resource Monitoring
 
-System resource utilization is monitored from inside the Ubuntu VM.
-
-Run:
+Inside Ubuntu:
 
 ```bash
 top
@@ -319,34 +435,40 @@ top
 Observe:
 
 ```text
-CPU Utilization
-Memory Utilization
-Running Processes
-Load Average
+CPU utilization
+Memory utilization
+Running processes
+Load average
 ```
 
-Exit with:
+From the Proxmox interface, navigate to:
 
 ```text
-q
+Datacenter
+   ↓
+Proxmox Node
+   ↓
+Virtual Machine
+   ↓
+Summary
 ```
 
-The manual also identifies the VMware Workstation VM settings as the place to verify:
+Observe:
 
 ```text
-Processors
-Memory
-Hard Disk
-Network Adapter
+CPU Usage
+Memory Usage
+Network Traffic
+Disk Usage
 ```
+
+The manual specifically asks these Proxmox-level resource observations to be recorded for later comparison with the Type-2 environment.
 
 ---
 
-# ⚙️ Sysbench Installation
+# ⚙️ Type-1 CPU Benchmark
 
-Sysbench is used for the CPU performance experiment.
-
-Install:
+Install Sysbench:
 
 ```bash
 sudo apt update
@@ -359,21 +481,202 @@ Verify:
 sysbench --version
 ```
 
-The manual specifies Sysbench as the CPU-performance measurement tool.
-
----
-
-# 🚀 CPU Performance Benchmark
-
-The Type-2 CPU benchmark is executed using:
+Run:
 
 ```bash
 sysbench cpu --cpu-max-prime=20000 run
 ```
 
-The benchmark produces several performance measurements.
+Record:
 
-The following values are recorded:
+```text
+Total Execution Time
+Total Number of Events
+Events per Second
+Latency Statistics
+Average Latency
+```
+
+The Sysbench CPU workload and required measurements are specified in the Type-1 section.
+
+---
+
+# 💻 Type-2 — VMware Workstation Setup
+
+## 1. Launch VMware Workstation
+
+Open VMware Workstation and select:
+
+```text
+Create a New Virtual Machine
+```
+
+---
+
+## 2. Select Typical Configuration
+
+Choose:
+
+```text
+Typical (recommended)
+```
+
+---
+
+## 3. Select Ubuntu ISO
+
+Choose:
+
+```text
+Installer disc image file (iso)
+```
+
+and select the required Ubuntu ISO.
+
+---
+
+## 4. Configure Guest OS
+
+Use:
+
+```text
+Guest OS       → Linux
+Version        → Ubuntu 64-bit
+```
+
+---
+
+## 5. Name the VM
+
+Recommended manual naming convention:
+
+```text
+CC-Experiment1-Type2
+```
+
+---
+
+## 6. Configure Virtual Disk
+
+Set:
+
+```text
+Maximum Disk Size → 20 GB
+```
+
+Use the default/single-file storage option described in the manual.
+
+---
+
+## 7. Customize Hardware
+
+Configure:
+
+```text
+Memory:
+2048 MB
+
+Processors:
+1 processor × 2 cores
+
+Total:
+2 vCPU
+
+Network:
+NAT
+```
+
+The VMware hardware configuration is explicitly given in the supplied manual.
+
+---
+
+# ✅ Type-2 VM Verification
+
+After installing Ubuntu:
+
+```bash
+hostnamectl
+lscpu
+free -h
+df -h
+```
+
+Verify:
+
+```text
+Hostname
+Operating System
+Kernel
+Architecture
+CPU configuration
+Memory configuration
+Disk configuration
+```
+
+Expected:
+
+```text
+2 vCPU
+2 GB RAM
+20 GB disk
+```
+
+The manual also asks the user to verify the virtualization-related CPU information using `lscpu`.
+
+---
+
+# 📊 Type-2 Resource Monitoring
+
+Inside Ubuntu:
+
+```bash
+top
+```
+
+Observe:
+
+```text
+CPU utilization
+Memory utilization
+Running processes
+Load average
+```
+
+VMware Workstation can also be used to verify:
+
+```text
+Processors
+Memory
+Hard Disk
+Network Adapter
+```
+
+The manual describes both VMware hardware verification and guest-level monitoring.
+
+---
+
+# ⚙️ Type-2 CPU Benchmark
+
+Install Sysbench:
+
+```bash
+sudo apt update
+sudo apt install sysbench -y
+```
+
+Verify:
+
+```bash
+sysbench --version
+```
+
+Run:
+
+```bash
+sysbench cpu --cpu-max-prime=20000 run
+```
+
+Record:
 
 ```text
 Total Execution Time
@@ -384,287 +687,279 @@ Average Latency
 Maximum Latency
 ```
 
-This exactly follows the Type-2 CPU analysis procedure in the supplied manual.
+These are the measurements required by the Type-2 benchmark section of the manual.
 
 ---
 
-# 📈 Type-2 Performance Results
+# 📈 Results
 
-> **Replace the placeholder paths and values below with the actual files and measurements from your `results/` folder.**
+> **Replace the placeholder paths below with the actual files from your `results/` directory. Do not change the measured values to examples from the manual.**
 
-## Raw Benchmark Output
+## Type-1 — Proxmox VE
 
-📄 **[View Type-2 Raw CPU Result](results/type2/raw/cpu.txt)**
+### Raw Result
 
-> Replace this path with the exact raw-result file in your repository.
+📄 [View Type-1 Raw CPU Result](results/type1/raw/cpu.txt)
 
----
+### Processed Result
 
-## Processed Result
+📊 [View Type-1 Processed CPU Result](results/type1/processed/cpu_results.csv)
 
-📊 **[View Type-2 Processed CPU Result](results/type2/processed/cpu_results.csv)**
+### Performance Graph
 
-> Replace this path with the exact processed CSV in your repository.
+📈 [View Type-1 CPU Performance Graph](results/type1/figures/cpu_performance.png)
 
----
+### Observation
 
-## Type-2 Observation Table
-
-| Parameter              | Observation             |
-| ---------------------- | ----------------------- |
-| Hypervisor             | VMware Workstation      |
-| Hypervisor Type        | Type-2                  |
-| Guest Operating System | Ubuntu                  |
-| CPU Allocation         | 2 vCPU                  |
-| Memory Allocation      | 2 GB                    |
-| Disk Allocation        | 20 GB                   |
-| Network                | NAT                     |
-| Total Execution Time   | **[ADD ACTUAL RESULT]** |
-| Total Events           | **[ADD ACTUAL RESULT]** |
-| Events per Second      | **[ADD ACTUAL RESULT]** |
-| Minimum Latency        | **[ADD ACTUAL RESULT]** |
-| Average Latency        | **[ADD ACTUAL RESULT]** |
-| Maximum Latency        | **[ADD ACTUAL RESULT]** |
-
-The manual provides these same observation categories for the Type-2 hypervisor.
+| Parameter            | Type-1 Result           |
+| -------------------- | ----------------------- |
+| Hypervisor           | Proxmox VE              |
+| Hypervisor Type      | Type-1                  |
+| Guest OS             | Ubuntu                  |
+| CPU                  | 2 vCPU                  |
+| Memory               | 2 GB                    |
+| Disk                 | 20 GB                   |
+| Total Execution Time | **[ADD ACTUAL RESULT]** |
+| Total Events         | **[ADD ACTUAL RESULT]** |
+| Events/sec           | **[ADD ACTUAL RESULT]** |
+| Average Latency      | **[ADD ACTUAL RESULT]** |
 
 ---
 
-# 📊 Performance Graph
+## Type-2 — VMware Workstation
 
-Add the actual Type-2 graph from your `results/` directory here.
+### Raw Result
 
-```markdown
-![Type-2 CPU Performance](results/type2/figures/cpu_performance.png)
-```
+📄 [View Type-2 Raw CPU Result](results/type2/raw/cpu.txt)
 
-Or use a repository link:
+### Processed Result
 
-📈 **[View Type-2 CPU Performance Graph](results/type2/figures/cpu_performance.png)**
+📊 [View Type-2 Processed CPU Result](results/type2/processed/cpu_results.csv)
 
-> Replace the placeholder path with the actual graph location.
+### Performance Graph
 
----
+📈 [View Type-2 CPU Performance Graph](results/type2/figures/cpu_performance.png)
 
-# 🔬 Recorded Type-2 Results
+### Observation
 
-The manual provides a final Type-2 performance-results table containing:
-
-| Performance Metric   | Result             |
-| -------------------- | ------------------ |
-| Hypervisor           | VMware Workstation |
-| Hypervisor Type      | Type-2             |
-| CPU Configuration    | 2 vCPU             |
-| Memory Configuration | 2 GB               |
-| Disk Configuration   | 20 GB              |
-| Total Execution Time | **[ADD RESULT]**   |
-| Total Events         | **[ADD RESULT]**   |
-| Events per Second    | **[ADD RESULT]**   |
-| Minimum Latency      | **[ADD RESULT]**   |
-| Average Latency      | **[ADD RESULT]**   |
-| Maximum Latency      | **[ADD RESULT]**   |
+| Parameter            | Type-2 Result           |
+| -------------------- | ----------------------- |
+| Hypervisor           | VMware Workstation      |
+| Hypervisor Type      | Type-2                  |
+| Guest OS             | Ubuntu                  |
+| CPU                  | 2 vCPU                  |
+| Memory               | 2 GB                    |
+| Disk                 | 20 GB                   |
+| Network              | NAT                     |
+| Total Execution Time | **[ADD ACTUAL RESULT]** |
+| Total Events         | **[ADD ACTUAL RESULT]** |
+| Events/sec           | **[ADD ACTUAL RESULT]** |
+| Minimum Latency      | **[ADD ACTUAL RESULT]** |
+| Average Latency      | **[ADD ACTUAL RESULT]** |
+| Maximum Latency      | **[ADD ACTUAL RESULT]** |
 
 ---
 
-# 📝 Key Observations
+# 🆚 Final Type-1 vs Type-2 Comparison
 
-The Type-2 experiment focuses on observing an Ubuntu virtual machine running through VMware Workstation.
+Populate this table only after inserting the actual measured benchmark values.
 
-The main observations include:
+| Metric               | Proxmox VE — Type-1 | VMware Workstation — Type-2 |      Difference |
+| -------------------- | ------------------: | --------------------------: | --------------: |
+| Total Execution Time |           **[ADD]** |                   **[ADD]** | **[CALCULATE]** |
+| Total Events         |           **[ADD]** |                   **[ADD]** | **[CALCULATE]** |
+| Events per Second    |           **[ADD]** |                   **[ADD]** | **[CALCULATE]** |
+| Minimum Latency      |           **[ADD]** |                   **[ADD]** | **[CALCULATE]** |
+| Average Latency      |           **[ADD]** |                   **[ADD]** | **[CALCULATE]** |
+| Maximum Latency      |           **[ADD]** |                   **[ADD]** | **[CALCULATE]** |
 
-* VM processor allocation.
-* Guest memory allocation.
-* Virtual disk allocation.
-* NAT-based network configuration.
-* CPU utilization during execution.
-* Memory utilization during execution.
-* Running processes and load average.
-* Sysbench CPU throughput.
-* CPU execution time.
-* CPU latency statistics.
+### Comparison Graph
 
-The actual performance interpretation should be made from the collected measurements.
+📊 [View Type-1 vs Type-2 Comparison Graph](results/comparison/type1_vs_type2_cpu.png)
+
+> Replace the placeholder path with your actual comparison figure.
 
 ---
 
-# 🧪 Experimental Workflow
+# 🧮 Performance Difference
+
+For throughput:
 
 ```text
-                    START
-                      │
-                      ▼
-          Launch VMware Workstation
-                      │
-                      ▼
-            Create New VM
-                      │
-                      ▼
-          Select Typical Setup
-                      │
-                      ▼
-              Ubuntu ISO
-                      │
-                      ▼
-            Configure 20 GB Disk
-                      │
-                      ▼
-             Customize Hardware
-                      │
-              ┌───────┴────────┐
-              ▼                ▼
-          2 vCPU             2 GB RAM
-              │                │
-              └───────┬────────┘
-                      ▼
-                  NAT Network
-                      │
-                      ▼
-               Finish VM Setup
-                      │
-                      ▼
-                 Power On
-                      │
-                      ▼
-              Install Ubuntu
-                      │
-                      ▼
-              Verify Hardware
-                      │
-          ┌───────────┼───────────┐
-          ▼           ▼           ▼
-       hostnamectl   lscpu      free -h
-                      │
-                      ▼
-                   df -h
-                      │
-                      ▼
-              Monitor Resources
-                      │
-                      ▼
-               Install Sysbench
-                      │
-                      ▼
-              Run CPU Benchmark
-                      │
-                      ▼
-              Record Measurements
-                      │
-                      ▼
-               Store Results
-                      │
-                      ▼
-             Analyze Performance
-                      │
-                      ▼
-                 Shut Down VM
-                      │
-                      ▼
-                     END
+Difference (%) =
+((Type-2 Throughput - Type-1 Throughput)
+ / Type-1 Throughput) × 100
 ```
 
-The workflow corresponds to the Type-2 workflow summarized in the manual.
+For execution time:
+
+```text
+Difference (%) =
+((Type-1 Time - Type-2 Time)
+ / Type-1 Time) × 100
+```
+
+Use the formula appropriate to the metric and report the actual measured values.
 
 ---
 
-# 📁 Results Organization
+# 🔬 Observation Framework
 
-Keep the actual result files in the repository's `results/` directory.
-
-Recommended logical organization:
+The experiment evaluates the two virtualization approaches using the following observation categories:
 
 ```text
-results/
+Virtualization Architecture
+        ↓
+VM Configuration
+        ↓
+CPU Configuration
+        ↓
+Memory Configuration
+        ↓
+Disk Configuration
+        ↓
+Network Configuration
+        ↓
+Resource Utilization
+        ↓
+CPU Benchmark
+        ↓
+Performance Metrics
+        ↓
+Type-1 / Type-2 Comparison
+```
+
+---
+
+# 🔁 Complete Experimental Workflow
+
+```text
+                         START
+                           │
+                           ▼
+                Understand Hypervisors
+                           │
+             ┌─────────────┴─────────────┐
+             │                           │
+             ▼                           ▼
+        TYPE-1                         TYPE-2
+      Proxmox VE                 VMware Workstation
+             │                           │
+             ▼                           ▼
+       Access Web UI               Launch VMware
+             │                           │
+             ▼                           ▼
+        Create VM                  Create New VM
+             │                           │
+             ▼                           ▼
+        Ubuntu ISO                   Ubuntu ISO
+             │                           │
+             ▼                           ▼
+        2 vCPU                       2 vCPU
+             │                           │
+             ▼                           ▼
+         2 GB RAM                     2 GB RAM
+             │                           │
+             ▼                           ▼
+         20 GB Disk                   20 GB Disk
+             │                           │
+             ▼                           ▼
+          vmbr0                          NAT
+             │                           │
+             └─────────────┬─────────────┘
+                           │
+                           ▼
+                     Install Ubuntu
+                           │
+                           ▼
+                    Verify Configuration
+                           │
+                           ▼
+                     Monitor Resources
+                           │
+                           ▼
+                      Install Sysbench
+                           │
+                           ▼
+                 Run CPU Benchmark
+                           │
+                           ▼
+                  Record Measurements
+                           │
+                           ▼
+                  Store Actual Results
+                           │
+                           ▼
+                 Compare Type-1 / Type-2
+                           │
+                           ▼
+                          END
+```
+
+---
+
+# 📂 Suggested Repository Organization
+
+```text
+type1-type2-hypervisor-performance/
 │
-└── type2/
-    │
-    ├── raw/
-    │   └── cpu.txt
-    │
-    ├── processed/
-    │   └── cpu_results.csv
-    │
-    └── figures/
-        └── cpu_performance.png
+├── README.md
+│
+├── docs/
+│   ├── type1/
+│   │   ├── vm-configuration.md
+│   │   └── screenshots/
+│   │
+│   └── type2/
+│       ├── vm-configuration.md
+│       └── screenshots/
+│
+├── results/
+│   ├── type1/
+│   │   ├── raw/
+│   │   ├── processed/
+│   │   └── figures/
+│   │
+│   ├── type2/
+│   │   ├── raw/
+│   │   ├── processed/
+│   │   └── figures/
+│   │
+│   └── comparison/
+│       ├── processed/
+│       └── figures/
+│
+└── scripts/
+    ├── run_type1_benchmark.sh
+    ├── run_type2_benchmark.sh
+    └── analyze_results.py
 ```
 
-> These are placeholders for README organization. Replace the paths with your repository's actual Type-2 result locations.
+> Modify this structure to match the folders that actually exist in the final repository.
 
 ---
 
-# 🔁 Reproducibility
+# 🧪 Reproducibility
 
-## Step 1 — Launch VMware Workstation
+## Type-1 — Proxmox VE
 
-Open VMware Workstation on the host system.
-
----
-
-## Step 2 — Create a New Virtual Machine
-
-Select:
+### Access
 
 ```text
-Create a New Virtual Machine
+https://<PROXMOX_SERVER_IP>:8006
 ```
 
-Choose:
+### VM Configuration
 
 ```text
-Typical (recommended)
+Guest OS  → Ubuntu
+CPU       → 2 vCPU
+Memory    → 2 GB
+Disk      → 20 GB
+Network   → vmbr0
 ```
 
----
-
-## Step 3 — Select Ubuntu ISO
-
-Select:
-
-```text
-Installer disc image file (ISO)
-```
-
-and choose the Ubuntu ISO.
-
----
-
-## Step 4 — Configure Virtual Disk
-
-Set:
-
-```text
-Maximum Disk Size = 20 GB
-```
-
-Use the default/single-file storage option specified by the manual.
-
----
-
-## Step 5 — Customize Hardware
-
-Configure:
-
-```text
-Processors:
-1 processor × 2 cores
-
-Memory:
-2048 MB
-
-Network:
-NAT
-```
-
----
-
-## Step 6 — Install Ubuntu
-
-Power on the VM and complete the Ubuntu installation.
-
----
-
-## Step 7 — Verify the Configuration
-
-Inside Ubuntu:
+### Verify
 
 ```bash
 hostnamectl
@@ -673,202 +968,238 @@ free -h
 df -h
 ```
 
----
-
-## Step 8 — Monitor Resources
+### Monitor
 
 ```bash
 top
 ```
 
-Record CPU and memory behavior during the experiment.
-
----
-
-## Step 9 — Install Sysbench
+### Benchmark
 
 ```bash
 sudo apt update
 sudo apt install sysbench -y
-```
-
----
-
-## Step 10 — Run the CPU Benchmark
-
-```bash
+sysbench --version
 sysbench cpu --cpu-max-prime=20000 run
 ```
 
-Record:
+---
+
+## Type-2 — VMware Workstation
+
+### VM Configuration
 
 ```text
-Execution Time
-Total Events
-Events/sec
-Minimum Latency
-Average Latency
-Maximum Latency
+Guest OS  → Ubuntu
+CPU       → 2 vCPU
+Memory    → 2 GB
+Disk      → 20 GB
+Network   → NAT
+```
+
+### Verify
+
+```bash
+hostnamectl
+lscpu
+free -h
+df -h
+```
+
+### Monitor
+
+```bash
+top
+```
+
+### Benchmark
+
+```bash
+sudo apt update
+sudo apt install sysbench -y
+sysbench --version
+sysbench cpu --cpu-max-prime=20000 run
 ```
 
 ---
 
-## Step 11 — Store the Results
+# 📋 Experiment Checklist
 
-Save the raw output and any processed results under the repository's `results/` directory.
-
----
-
-# 🆚 Relation to Type-1 Hypervisor
-
-This experiment forms **Part B** of the laboratory manual.
-
-The corresponding Type-1 environment uses:
+## Type-1 — Proxmox VE
 
 ```text
-Proxmox VE
-```
-
-while this experiment uses:
-
-```text
-VMware Workstation
-```
-
-The manual specifies the VMware Workstation VM with:
-
-```text
-2 vCPU
-2 GB RAM
-20 GB Disk
-Ubuntu
-```
-
-and uses this environment for Type-2 performance analysis.
-
-The Type-1 section similarly records CPU, memory, disk, network, resource monitoring, and Sysbench CPU performance, allowing the two hypervisor environments to be studied using comparable guest configurations.
-
----
-
-# 📊 Type-1 vs Type-2 Comparison
-
-Once both experiments are completed, add the measured comparison here.
-
-| Metric             | Type-1 — Proxmox VE | Type-2 — VMware Workstation |      Difference |
-| ------------------ | ------------------: | --------------------------: | --------------: |
-| CPU Execution Time |           **[ADD]** |                   **[ADD]** | **[CALCULATE]** |
-| Total Events       |           **[ADD]** |                   **[ADD]** | **[CALCULATE]** |
-| Events/sec         |           **[ADD]** |                   **[ADD]** | **[CALCULATE]** |
-| Average Latency    |           **[ADD]** |                   **[ADD]** | **[CALCULATE]** |
-| Minimum Latency    |           **[ADD]** |                   **[ADD]** | **[CALCULATE]** |
-| Maximum Latency    |           **[ADD]** |                   **[ADD]** | **[CALCULATE]** |
-
-> Do not enter assumed values. Populate this table only from the actual Type-1 and Type-2 measurements.
-
----
-
-# 📈 Comparison Graph
-
-After both datasets are available, add your actual comparison figure:
-
-```markdown
-![Type-1 vs Type-2 CPU Performance](results/comparison/type1_vs_type2_cpu.png)
-```
-
-📊 **[View Type-1 vs Type-2 CPU Comparison](results/comparison/type1_vs_type2_cpu.png)**
-
-> Replace the path with your actual graph.
-
----
-
-# 📚 Technologies Used
-
-| Technology             | Purpose                           |
-| ---------------------- | --------------------------------- |
-| **VMware Workstation** | Type-2 hypervisor                 |
-| **Ubuntu**             | Guest operating system            |
-| **Sysbench**           | CPU performance benchmark         |
-| **top**                | Resource monitoring               |
-| **hostnamectl**        | OS/system verification            |
-| **lscpu**              | CPU configuration verification    |
-| **free**               | Memory configuration verification |
-| **df**                 | Disk configuration verification   |
-
----
-
-# ✅ Experiment Checklist
-
-```text
-☐ Launch VMware Workstation
-☐ Create a new virtual machine
-☐ Select Typical configuration
+☐ Access Proxmox VE
+☐ Log in to Proxmox
+☐ Select Proxmox Node
+☐ Create VM
 ☐ Select Ubuntu ISO
-☐ Configure 20 GB disk
 ☐ Configure 2 vCPU
 ☐ Configure 2 GB RAM
-☐ Configure NAT networking
-☐ Complete VM creation
-☐ Power on VM
+☐ Configure 20 GB disk
+☐ Configure vmbr0
+☐ Start VM
 ☐ Install Ubuntu
-☐ Run hostnamectl
-☐ Run lscpu
-☐ Run free -h
-☐ Run df -h
+☐ Verify hostnamectl
+☐ Verify lscpu
+☐ Verify memory using free -h
+☐ Verify disk using df -h
 ☐ Monitor using top
 ☐ Install Sysbench
 ☐ Run CPU benchmark
-☐ Record execution time
-☐ Record total events
-☐ Record events/sec
-☐ Record latency statistics
-☐ Save raw result
-☐ Save processed result
-☐ Add performance graph
-☐ Complete Type-2 analysis
-☐ Compare with Type-1 results
+☐ Record benchmark results
+☐ Record Proxmox resource observations
+☐ Save result files
+☐ Shut down VM
+```
+
+## Type-2 — VMware Workstation
+
+```text
+☐ Launch VMware Workstation
+☐ Create New Virtual Machine
+☐ Select Typical configuration
+☐ Select Ubuntu ISO
+☐ Configure 2 vCPU
+☐ Configure 2 GB RAM
+☐ Configure 20 GB disk
+☐ Configure NAT
+☐ Finish VM creation
+☐ Power on VM
+☐ Install Ubuntu
+☐ Verify hostnamectl
+☐ Verify lscpu
+☐ Verify memory using free -h
+☐ Verify disk using df -h
+☐ Monitor using top
+☐ Install Sysbench
+☐ Run CPU benchmark
+☐ Record benchmark results
+☐ Save result files
 ☐ Shut down VM
 ```
 
 ---
 
-# 🔒 Experimental Integrity
+# 📊 Result Integrity
 
-The README should contain only the measurements actually obtained during the experiment.
+The benchmark values reported in this repository should always come from the **actual experiment output**.
 
-Important principles:
+The intended evidence chain is:
 
 ```text
-Actual Configuration
-        ↓
-Actual Benchmark
-        ↓
-Actual Raw Output
-        ↓
-Processed Measurements
-        ↓
-Calculated Difference
-        ↓
+Actual VM Configuration
+          ↓
+Actual Benchmark Execution
+          ↓
+Raw Benchmark Output
+          ↓
+Processed Result
+          ↓
+Calculated Comparison
+          ↓
 Observed Conclusion
 ```
 
-No benchmark value should be replaced with example values from the laboratory manual.
+Example values shown in the laboratory manual are configuration or format examples and should not be presented as experimental measurements.
 
 ---
 
-# 📖 Reference
+# 💡 Key Learning Outcomes
+
+By completing this experiment, the learner gains practical understanding of:
+
+### Virtualization
+
+* Type-1 hypervisor architecture
+* Type-2 hypervisor architecture
+* Virtual machine resource allocation
+* Guest operating-system isolation
+
+### System Administration
+
+* VM creation
+* CPU configuration
+* Memory allocation
+* Virtual disk configuration
+* Network configuration
+* System verification
+
+### Performance Analysis
+
+* CPU benchmarking with Sysbench
+* Execution-time measurement
+* Throughput measurement
+* Latency measurement
+* Resource monitoring
+* Comparative analysis
+
+### Experimental Practice
+
+* Controlled configurations
+* Repeatable benchmark execution
+* Recording actual measurements
+* Preserving raw evidence
+* Comparing measured performance
+
+---
+
+# 📌 Important Comparison Note
+
+The two experiments use comparable guest CPU, memory, and disk allocations, but the network configurations specified by the manual differ:
+
+```text
+Proxmox VE      → vmbr0
+VMware          → NAT
+```
+
+Therefore, network-specific observations should be interpreted in the context of these configured modes rather than assuming identical network paths.
+
+---
+
+# 🏁 Conclusion
+
+This laboratory experiment provides a practical comparison framework for studying **Type-1 and Type-2 hypervisors**.
+
+The Type-1 environment uses **Proxmox VE**, while the Type-2 environment uses **VMware Workstation**. Both environments host Ubuntu virtual machines configured with **2 vCPU, 2 GB RAM, and 20 GB disk space** according to the laboratory procedure.
+
+The CPU benchmark is performed using the same Sysbench workload:
+
+```text
+sysbench cpu --cpu-max-prime=20000 run
+```
+
+The final comparison is based on the actual recorded execution time, total events, events per second, and latency statistics.
+
+> **Final conclusions should be drawn only after inserting the actual measurements collected from both hypervisor environments.**
+
+---
+
+# 📚 Reference
 
 **Performance Analysis of Type-1 and Type-2 Hypervisors — Lab Manual**
 
-**Part B: Performance Analysis Using Type-2 Hypervisor – VMware Workstation**
+### Part A
 
-## The VM creation procedure, hardware configuration, verification commands, resource-monitoring procedure, Sysbench benchmark, observation table, and Type-2 workflow documented here are based on the supplied laboratory manual.
+**Performance Analysis Using Type-1 Hypervisor – Proxmox VE**
 
-## 👩‍💻 Project
+### Part B
 
-**Performance Analysis of Type-1 and Type-2 Hypervisors**
+**Performance Analysis Using Type-2 Hypervisor – VMware Workstation**
 
-**Type-2 Platform:** VMware Workstation
-**Hypervisor Type:** Type-2
+## This README follows the supplied laboratory manual's Type-1 and Type-2 workflows, VM configurations, verification procedure, monitoring approach, Sysbench CPU benchmark, observation tables, and comparison framework.
+
+# 👩‍💻 Project Information
+
+**Project:** Performance Analysis of Type-1 and Type-2 Hypervisors
+
+**Type-1:** Proxmox VE
+**Type-2:** VMware Workstation
 **Guest OS:** Ubuntu
-**CPU Benchmark:** Sysbench
+**Benchmark:** Sysbench CPU
+**Primary Metrics:** Execution Time, Total Events, Events/sec, Latency
 
+---
+
+### ⭐ Experimental Principle
+
+> **Measure first. Compare second. Conclude from evidence.**
