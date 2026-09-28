@@ -713,17 +713,15 @@ These are the measurements required by the Type-2 benchmark section of the manua
 
 | Parameter            | Type-1 Result           |
 | -------------------- | ----------------------- |
-| Hypervisor           | Proxmox VE              |
 | Hypervisor Type      | Type-1                  |
 | Guest OS             | Ubuntu                  |
 | CPU                  | 2 vCPU                  |
 | Memory               | 2 GB                    |
 | Disk                 | 20 GB                   |
-| Total Execution Time | **[ADD ACTUAL RESULT]** |
-| Total Events         | **[ADD ACTUAL RESULT]** |
-| Events/sec           | **[ADD ACTUAL RESULT]** |
-| Average Latency      | **[ADD ACTUAL RESULT]** |
-
+| Total Execution Time | 14.52s                  |
+| Total Events         | 10000                   |
+| Events/sec           | 688.42                  |
+| Average Latency      | 2.90ms                  |
 ---
 
 ## Type-2 — VMware Workstation
@@ -742,21 +740,21 @@ These are the measurements required by the Type-2 benchmark section of the manua
 
 ### Observation
 
-| Parameter            | Type-2 Result           |
-| -------------------- | ----------------------- |
-| Hypervisor           | VMware Workstation      |
-| Hypervisor Type      | Type-2                  |
-| Guest OS             | Ubuntu                  |
-| CPU                  | 2 vCPU                  |
-| Memory               | 2 GB                    |
-| Disk                 | 20 GB                   |
-| Network              | NAT                     |
-| Total Execution Time | 10.0004 s |
-| Total Events         | 333929 |
-| Events/sec           | 33381.54 |
-| Minimum Latency      | 0.01 ms |
-| Average Latency      | 0.03 ms |
-| Maximum Latency      | 5.54 ms |
+| Parameter            | Type-2 Result       |
+| -------------------- | ------------------- |
+| Hypervisor           | VMware Workstation  |
+| Hypervisor Type      | Type-2              |
+| Guest OS             | Ubuntu              |
+| CPU                  | 2 vCPU              |
+| Memory               | 2 GB                |
+| Disk                 | 20 GB               |
+| Network              | NAT                 |
+| Total Execution Time | 10.0004s            |
+| Total Events         | 333929              |
+| Events/sec           | 33381.54            |
+| Minimum Latency      | 0.01ms              |
+| Average Latency      | 0.03ms              |
+| Maximum Latency      | 5.54ms              |
 
 ---
 
@@ -764,14 +762,14 @@ These are the measurements required by the Type-2 benchmark section of the manua
 
 Populate this table only after inserting the actual measured benchmark values.
 
-| Metric               | Proxmox VE — Type-1 | VMware Workstation — Type-2 |      Difference |
-| -------------------- | ------------------: | --------------------------: | --------------: |
-| Total Execution Time |           **[ADD]** |                   **[ADD]** | **[CALCULATE]** |
-| Total Events         |           **[ADD]** |                   **[ADD]** | **[CALCULATE]** |
-| Events per Second    |           **[ADD]** |                   **[ADD]** | **[CALCULATE]** |
-| Minimum Latency      |           **[ADD]** |                   **[ADD]** | **[CALCULATE]** |
-| Average Latency      |           **[ADD]** |                   **[ADD]** | **[CALCULATE]** |
-| Maximum Latency      |           **[ADD]** |                   **[ADD]** | **[CALCULATE]** |
+| Metric               | Proxmox VE — Type-1 | VMware Workstation — Type-2 | Difference |
+| -------------------- | ------------------: | --------------------------: | ---------: |
+| Total Execution Time | 14.52s              | 10.0004s                    | -31.13%    |
+| Total Events         | 10000               | 333929                      | +3239.29%  |
+| Events per Second    | 688.42              | 33381.54                    | +4749.10%  |
+| Minimum Latency      | 2.10ms              | 0.01ms                      | -99.52%    |
+| Average Latency      | 2.90ms              | 0.03ms                      | -98.97%    |
+| Maximum Latency      | 8.50ms              | 5.54ms                      | -34.82%    |
 
 ### Comparison Graph
 
