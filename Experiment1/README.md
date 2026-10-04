@@ -159,7 +159,7 @@ The same Sysbench workload is used for both Type-1 and Type-2 so that the result
 
 The following screenshot shows the final Sysbench result obtained from the Type-1 virtual machine.
 
-![Type-1 Final Result](results/type1/final-result.png)
+![Type-1 Final Result](type1hypervisor/results/08_Sysbench_CPU_Benchmark.jpeg)
 
 ### Type-1 Result
 
@@ -320,7 +320,7 @@ Record the same performance metrics used for Type-1.
 
 The following screenshot shows the final Sysbench result obtained from the Type-2 virtual machine.
 
-![Type-2 Final Result](results/type2/final-result.png)
+![Type-2 Final Result](type2hypervisor/results/05_Sysbench_CPU_Benchmark.jpeg.jpeg)
 
 ### Type-2 Result
 
