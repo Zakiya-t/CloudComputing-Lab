@@ -1,14 +1,6 @@
-# 🚀 Performance Analysis of Virtual Machines and Docker Containers
+# Performance Analysis of Virtual Machines and Docker Containers
 
 ### Controlled Performance Comparison of a Virtual Machine and a Docker Container
-
-![VM](https://img.shields.io/badge/Virtual%20Machine-VMware%20Workstation-blue?style=for-the-badge)
-![Docker](https://img.shields.io/badge/Container-Docker-2496ED?style=for-the-badge)
-![Ubuntu](https://img.shields.io/badge/OS-Ubuntu-E95420?style=for-the-badge)
-![Sysbench](https://img.shields.io/badge/CPU-Sysbench-success?style=for-the-badge)
-![fio](https://img.shields.io/badge/Disk-fio-orange?style=for-the-badge)
-![iperf3](https://img.shields.io/badge/Network-iperf3-purple?style=for-the-badge)
-![FastAPI](https://img.shields.io/badge/API-FastAPI-009688?style=for-the-badge)
 
 ---
 
@@ -58,13 +50,6 @@ The Virtual Machine configuration follows the controlled configuration specified
 
 The laboratory manual recommends fixed CPU, memory, disk, and network allocation so that the comparison remains controlled.
 
-### VM Documentation
-
-* [CPU Information](docs/cpu-info.txt)
-* [Memory Information](docs/memory-info.txt)
-* [Storage Information](docs/storage-info.txt)
-* [Kernel Information](docs/kernel-info.txt)
-* [VM Configuration](docs/vm-configuration.txt)
 
 ---
 
@@ -814,40 +799,6 @@ All generated performance graphs are stored in `results/figures/`.
 
 ---
 
-# 12. Overall Findings
-
-The measured results show that performance varies according to workload type.
-
-### CPU
-
-The VM and Docker CPU results are very close, with Docker showing a **0.54% higher mean CPU throughput**.
-
-### Memory
-
-The memory measurements show a substantial difference between the two environments.
-
-### Disk
-
-The results vary considerably by I/O pattern. Docker records higher sequential-read, sequential-write, and random-read bandwidth, while random-write performance is nearly the same.
-
-### Network
-
-The VM records slightly higher throughput for both tested `iperf3` configurations.
-
-### Application
-
-Application performance depends on the endpoint. Docker records higher throughput for `/health`, while the VM records higher throughput for `/compute`.
-
-### Startup
-
-The measured mean startup time is lower for the VM.
-
-### Scalability
-
-The CPU scalability measurements remain relatively close between the two environments, while the API scalability experiment shows higher measured throughput for Docker across the tested workload levels.
-
----
-
 # 13. Conclusion
 
 This experiment provides a controlled comparison of a Virtual Machine and a Docker Container across multiple performance dimensions.
@@ -944,82 +895,7 @@ Experiment2/
     └── run_cpu.sh
 ```
 
----
-
-# 15. Reproduction and Analysis
-
-From the project root:
-
-### Process Results
-
-```bash
-python analysis/process_results.py
-```
-
-### Generate Comparison
-
-```bash
-python analysis/create_comparison.py
-```
-
-### Generate Graphs
-
-```bash
-python analysis/generate_plots.py
-```
-
-### Open the Jupyter Notebook
-
-```bash
-jupyter notebook
-```
-
-Then open:
-
-```text
-analysis/analysis.ipynb
-```
-
-The notebook performs the Python-based analysis of the processed benchmark results.
-
----
-
-# 16. Result Files
-
-### Raw Measurements
-
-[Open Raw Benchmark Results](results/raw/)
-
-### Processed Results
-
-[Open Processed CSV Results](results/processed/)
-
-### Statistical Results
-
-[Open Statistics](results/processed/statistics.csv)
-
-### Final Comparison
-
-[Open Final Comparison](results/processed/final_comparison.csv)
-
-### Performance Figures
-
-[Open All Figures](results/figures/)
-
----
-
 # 17. Author
 
 ## Zakiya Tahasildar
 
-**Cloud Computing Lab — Experiment 2**
-
-### Project
-
-**Performance Analysis of Virtual Machines and Docker Containers**
-
----
-
-> ## ⭐ Measure → Analyze → Compare → Conclude
->
-> Performance conclusions in this project are derived from benchmark measurements, processed datasets, statistical analysis, and graphical comparison.
