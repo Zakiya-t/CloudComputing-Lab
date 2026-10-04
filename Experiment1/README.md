@@ -386,54 +386,25 @@ Physical Hardware
 
 ---
 
-## 5.1 Performance Comparison Table
+## 5.3 Performance Difference and Comparison Table
 
-| Metric               | Type-1: Proxmox VE | Type-2: VMware Workstation |    Difference |
-| -------------------- | -----------------: | -------------------------: | ------------: |
-| Total Execution Time |            14.52 s |                  10.0004 s |  Type-2 lower |
-| Total Events         |             10,000 |                    333,929 | Type-2 higher |
-| Events per Second    |             688.42 |                  33,381.54 | Type-2 higher |
-| Average Latency      |            2.90 ms |                    0.03 ms |  Type-2 lower |
-| Maximum Latency      |            8.50 ms |                    5.54 ms |  Type-2 lower |
+| Performance Metric   | Type-1: Proxmox VE | Type-2: VMware Workstation |           Difference | Observation                      |
+| -------------------- | -----------------: | -------------------------: | -------------------: | -------------------------------- |
+| Total Execution Time |            14.52 s |                  10.0004 s |   **4.5196 s lower** | Type-2 is faster                 |
+| Total Events         |             10,000 |                    333,929 |   **323,929 higher** | Type-2 completed more events     |
+| Events per Second    |             688.42 |                  33,381.54 | **32,693.12 higher** | Type-2 has higher throughput     |
+| Average Latency      |            2.90 ms |                    0.03 ms |    **2.87 ms lower** | Type-2 has lower latency         |
+| Maximum Latency      |            8.50 ms |                    5.54 ms |    **2.96 ms lower** | Type-2 has lower maximum latency |
 
-The repository records the Type-2 environment with lower execution time and latency and substantially higher events per second for the recorded benchmark run.
+### Percentage Difference
 
----
+| Metric            |         Percentage Difference |
+| ----------------- | ----------------------------: |
+| Execution Time    |    **31.13% lower in Type-2** |
+| Events per Second | **4749.10% higher in Type-2** |
+| Average Latency   |    **98.97% lower in Type-2** |
 
-## 5.2 Performance Difference
-
-For execution time:
-
-```text
-Difference (%) =
-((Type-1 Time - Type-2 Time) / Type-1 Time) × 100
-```
-
-Using the recorded execution times:
-
-```text
-((14.52 - 10.0004) / 14.52) × 100
-≈ 31.13%
-```
-
-Thus, the recorded Type-2 run completed the benchmark approximately **31.13% faster** than the recorded Type-1 run.
-
-For throughput:
-
-```text
-Difference (%) =
-((Type-2 Throughput - Type-1 Throughput)
- / Type-1 Throughput) × 100
-```
-
-Using the recorded events-per-second values:
-
-```text
-((33381.54 - 688.42) / 688.42) × 100
-≈ 4749.10%
-```
-
-These percentages describe this particular recorded benchmark run; they should not be treated as universal performance characteristics of all Proxmox and VMware installations. The repository itself notes that measured values should come from the actual experiment output.
+The recorded results show that the Type-2 configuration performed better for the selected benchmark run in terms of execution time, throughput, and latency.
 
 ---
 
