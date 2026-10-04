@@ -445,16 +445,6 @@ The graph provides a visual comparison of the measured CPU benchmark performance
 
 ---
 
-# 6. Observations
-
-1. Both hypervisors successfully hosted Ubuntu virtual machines with comparable CPU, memory, and disk allocations.
-2. The Type-1 configuration uses Proxmox VE directly over the physical hardware, while the Type-2 configuration introduces a host operating-system layer.
-3. The recorded Type-2 benchmark produced higher events per second and lower latency than the recorded Type-1 benchmark.
-4. The benchmark results are affected by the complete experimental environment, including hardware, VM configuration, workload, and system state during execution.
-5. The network configurations are not identical: Proxmox uses `vmbr0`, whereas VMware uses NAT, so network-specific observations must be interpreted in that context.
-
----
-
 # 7. Conclusion
 
 This experiment provided a practical comparison of Type-1 and Type-2 hypervisor architectures using Ubuntu virtual machines and a common Sysbench CPU workload.
@@ -471,6 +461,3 @@ The experiment therefore demonstrates that hypervisor architecture can influence
 
 **Name:** Zakiya Tahasildar
 
-**Experiment:** Performance Analysis of Type-1 and Type-2 Hypervisors
-
-**Repository:** CloudComputing-Lab
